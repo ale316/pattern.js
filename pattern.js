@@ -71,16 +71,20 @@ var Pattern = (function() {
 	function _match(tokens, currRule, result) {
 		if(!result) result = []
 		if(tokens.length <= 0) {
-			console.log('RESULT FOUND: ', result.concat(tokens))
+			console.log('RESULT FOUND: ', result)
 			return currRule.accepting
 		}
 		var first = tokens[0],
 			rest = tokens.slice(1)
 		for (var i = 0; i < currRule.next.length; ++i) {
-			var isEntity = _entities[ currRule.next[i].entity ]
+			var entityName = currRule.next[i].entity,
+				isEntity = _entities[ entityName ]
 			if(isEntity(first)) {
 				var newResult = result.slice()
-				newResult.push(first)
+				newResult.push({
+					entity: entityName
+					value: first
+				})
 				_match(rest, currRule.next[i], newResult)
 				if(rest.length > 0) {
 					var concatenated = rest.slice()
