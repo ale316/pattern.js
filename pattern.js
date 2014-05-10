@@ -71,7 +71,6 @@ var Pattern = (function() {
 	function _match(tokens, currRule, result) {
 		if(!result) result = []
 		if(tokens.length <= 0) {
-			console.log('curr rule: ',currRule)
 			console.log('RESULT FOUND: ', result.concat(tokens))
 			return currRule.accepting
 		}
