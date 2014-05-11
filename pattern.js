@@ -82,7 +82,7 @@ var Pattern = (function() {
 			if(isEntity(first)) {
 				var newResult = result.slice()
 				newResult.push({
-					entity: entityName
+					entity: entityName,
 					value: first
 				})
 				_match(rest, currRule.next[i], newResult)
