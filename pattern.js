@@ -32,16 +32,11 @@ var Pattern = (function() {
 			throw "The list of rules must be an array"
 		for (var i = 0; i < rules.length; ++i) {
 			var rule = rules[i],
-				id, splitRule
-			if(typeof rule === 'string') {
-				splitRule = rule.split(' ')
-				id = splitRule.join('_')
-			} else if(typeof rule === 'object') {
-				splitRule = rule.definition.split(' ')
-				id = rule.id
-			}
+				ruleName, splitRule
+			splitRule = rule.split(' ')
+			ruleName = rule //splitRule.join('_')
 			
-			_defineRule(splitRule, _rules, id)
+			_defineRule(splitRule, _rules, ruleName)
 		}
 	}
 
@@ -50,8 +45,8 @@ var Pattern = (function() {
 		if(str.length > 0) {
 			var tokens = str.split(' '),
 				rules = _rules
-			_match(tokens, rules, [], function(task, id) {
-				result[id] = task
+			_match(tokens, rules, [], function(match, ruleName) {
+				result[ruleName] = Match(ruleName.split(' '), match)
 			})
 			return result
 		}
@@ -59,7 +54,7 @@ var Pattern = (function() {
 
 	// PRIVATE METHODS
 	/* a rule is a string of entities: "entity1 entity2 entity1 entity3", for example: "task by date", */
-	function _defineRule(rule, rules, id) {
+	function _defineRule(rule, rules, ruleName) {
 		if(rule.length <= 0) return
 		var first = rule[0],
 			rest  = rule.slice(1),
@@ -68,9 +63,9 @@ var Pattern = (function() {
 			if(rules.next[i].entity == first) {
 				if(isLast) {
 					rules.next[i].accepting = true
-					rules.next[i].id 		= id
+					rules.next[i].ruleName 	= ruleName
 				}
-				return _defineRule(rest, rules.next[i], id)
+				return _defineRule(rest, rules.next[i], ruleName)
 			}
 		}
 		var newNode = {
@@ -78,16 +73,16 @@ var Pattern = (function() {
 			accepting: isLast,
 			next: []
 		}
-		if(isLast) newNode.id = id
+		if(isLast) newNode.ruleName = ruleName
 		rules.next.push(newNode)
-		return _defineRule(rest, newNode, id)
+		return _defineRule(rest, newNode, ruleName)
 	}
 
 	function _match(tokens, currRule, result, returnCb) {
 		if(!result) result = []
 		if(tokens.length <= 0) {
 			if(currRule.accepting)
-				return returnCb(result, currRule.id)
+				return returnCb(result, currRule.ruleName)
 		}
 		var first = tokens[0],
 			rest = tokens.slice(1)
@@ -114,3 +109,39 @@ var Pattern = (function() {
 		match: match
 	}
 })()
+
+var Match = function(rule, tokenized) {
+	var rule = rule,
+		depth = rule.length,
+		_arr = tokenized
+
+	function toObject() {
+		var _obj = {}
+		for (var i = 0; i < rule.length; ++i) {
+			var entity = rule[i]
+				existingMatch = _obj[entity]
+			if(existingMatch) {
+				if(existingMatch instanceof Array) {
+					_obj[entity].push(tokenized[i])
+				} else {
+					_obj[entity] = [_obj[entity], tokenized[i]]
+				}
+			} else {
+				_obj[entity] = tokenized[i]
+			}
+		}
+
+		return _obj
+	}
+
+	function toArray() {
+		return _arr
+	}
+
+	return {
+		rule: rule,
+		depth: depth,
+		toObject: toObject,
+		toArray: toArray
+	}
+}
