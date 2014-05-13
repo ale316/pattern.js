@@ -111,6 +111,8 @@ var Pattern = (function() {
 })()
 
 var Match = function(rule, tokenized) {
+	"use strict"
+
 	var rule = rule,
 		depth = rule.length,
 		_arr = tokenized
@@ -118,7 +120,7 @@ var Match = function(rule, tokenized) {
 	function toObject() {
 		var _obj = {}
 		for (var i = 0; i < rule.length; ++i) {
-			var entity = rule[i]
+			var entity = rule[i],
 				existingMatch = _obj[entity]
 			if(existingMatch) {
 				if(existingMatch instanceof Array) {
