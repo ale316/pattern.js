@@ -115,25 +115,27 @@ var Match = function(rule, tokenized) {
 
 	var rule = rule,
 		depth = rule.length,
-		_arr = tokenized
+		_arr = tokenized,
+		_obj = null
 
 	function toObject() {
-		var _obj = {}
+		if(_obj) return _obj
+		var obj = {}
 		for (var i = 0; i < rule.length; ++i) {
 			var entity = rule[i],
-				existingMatch = _obj[entity]
+				existingMatch = obj[entity]
 			if(existingMatch) {
 				if(existingMatch instanceof Array) {
-					_obj[entity].push(tokenized[i])
+					obj[entity].push(tokenized[i])
 				} else {
-					_obj[entity] = [_obj[entity], tokenized[i]]
+					obj[entity] = [obj[entity], tokenized[i]]
 				}
 			} else {
-				_obj[entity] = tokenized[i]
+				obj[entity] = tokenized[i]
 			}
 		}
-
-		return _obj
+		_obj = obj
+		return obj
 	}
 
 	function toArray() {
