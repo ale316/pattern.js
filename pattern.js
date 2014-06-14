@@ -9,16 +9,23 @@ var Pattern = (function() {
 		}
 	// PUBLIC METHODS
 	/*
-		input: [{ name: String, definition: function() { return true|false }}]
+		input: [{ name: String, definition: function() { return true|false } | RegExp | null }]
 	*/
 	function defineEntities(entities) {
 		for (var i = 0; i < entities.length; ++i) {
 			var entity = entities[i]
 			if(!entity.name) 
 				throw "All entities must have a name"
-			if(entity.definition && typeof(entity.definition) != "function")
-				throw "An entity definition must be a function taking as the only argument a string token"
-			if(!entity.definition) {
+			if(entity.definition) {
+				if(entity.definition instanceof RegExp) {
+					var regexp = entity.definition
+					entity.definition = function(ent) {
+						return regexp.test(ent)
+					}
+				} else if(typeof(entity.definition) != "function") {
+					throw "An entity definition must be a function taking as the only argument a string token"
+				}
+			} else {
 				entity.definition = function(ent) {
 					return ent == entity.name
 				}
