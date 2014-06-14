@@ -48,3 +48,13 @@ Pattern.definePatterns([
     'funkyNumber operation = funkyNumber' // would match 36 * = 300, but not 36 * = 17
 ])
 ```
+
+Finally, you can feed a string to `Pattern.match` to verify that it is matched by any of the provided patterns. The method `Pattern.match` returns a `Match` object, that can be empty if none is found.
+```javascript
+Pattern.match('36 + 300 = 336'); // returns a Match
+Pattern.match('36 + 301 = 336'); // returns {}
+```
+
+Matches
+-------
+soon
