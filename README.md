@@ -14,7 +14,8 @@ Pattern.defineEntities([
         name: 'funkyNumber',
         definition: function(str) {
             var result = false;
-            /* a funkyNumber is an integer of less than 5 digits that is divisible by the sum of its digits.
+            /* a funkyNumber is an integer of less than 5 digits that is 
+            divisible by the sum of its digits.
             Eg: 36 is funky because 36/(3+6) = 4 */
             var intVersion = parseInt(str)
             if(str.length < 5 && !isNaN(intVersion)) {
